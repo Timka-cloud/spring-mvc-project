@@ -11,11 +11,11 @@ public class MySpringMvcDispatcherServletInit extends AbstractAnnotationConfigDi
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[0];
+        return new Class[] {SpringConfig.class}; // говорим где находится конфиг класс
     }
 
     @Override
     protected String[] getServletMappings() {
-        return new String[0];
+        return new String[] {"/"}; // все запросы от пользователя отправляем на DispatcherServlet
     }
 }
