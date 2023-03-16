@@ -9,7 +9,12 @@
   <h1 th:text="${headerMessage}"></h1>
   <div th:each="p : ${people}">
     <a th:href="@{/people/{id}(id=${p.getId()})}" th:text="${p.getName()}"></a>
+
   </div>
+    <br/>
+    <hr/>
+  <a href="/people/new">Create a new person</a>
+
 
 </body>
 </html>

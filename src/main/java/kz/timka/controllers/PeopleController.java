@@ -51,6 +51,25 @@ public class PeopleController {
 
     }
 
+    @GetMapping("/{id}/edit")
+    public String edit(@PathVariable Long id, Model model) {
+        Person person = personDAO.getById(id);
+        model.addAttribute("personEdit", person);
+        return "people/edit";
+    }
+
+    @PatchMapping("/{id}")
+    public String update(@ModelAttribute("person") Person person, @PathVariable Long id) {
+        personDAO.update(id,person);
+        return "redirect:/people";
+    }
+
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Long id) {
+        personDAO.delete(id);
+        return "redirect:/people";
+    }
+
     @ModelAttribute("headerMessage") // если вешаем на метод аннотацию:
     //В модель в каждом методе текущего контроллера добавляет клюл-значение
     //Используются для добавления тех пар ключ-значение, которые нужны во всех моделях этого контроллера
