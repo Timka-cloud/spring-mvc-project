@@ -18,10 +18,10 @@ public class PersonDAO {
     @PostConstruct
     public void init() {
         people = new ArrayList<>(Arrays.asList(
-                new Person(peopleCount++, "Alex", "Benjamin", "alex@gmail.ru"),
-                new Person(peopleCount++, "Tom", "Spencer", "tom@gmail.ru"),
-                new Person(peopleCount++, "Ben", "Lincoln", "ben@gmail.ru"),
-                new Person(peopleCount++, "Kate", "Datsu", "kate@gmail.ru")
+                new Person(peopleCount++, "Alex", "Benjamin", 21,"alex@gmail.ru"),
+                new Person(peopleCount++, "Tom", "Spencer", 24,"tom@gmail.ru"),
+                new Person(peopleCount++, "Ben", "Lincoln", 19,"ben@gmail.ru"),
+                new Person(peopleCount++, "Kate", "Datsu", 32,"kate@gmail.ru")
         ));
     }
 
@@ -34,6 +34,7 @@ public class PersonDAO {
         Person personToBeUpdated = getById(id);
         personToBeUpdated.setName(person.getName());
         personToBeUpdated.setSurname(person.getSurname());
+        personToBeUpdated.setAge(person.getAge());
         personToBeUpdated.setEmail(person.getEmail());
     }
 

@@ -8,7 +8,7 @@
 
   <h1 th:text="${headerMessage}"></h1>
   <div th:each="p : ${people}">
-    <a th:href="@{/people/{id}(id=${p.getId()})}" th:text="${p.getName()}"></a>
+    <a th:href="@{/people/{id}(id=${p.getId()})}" th:text="${p.getName() + ', ' + p.getSurname()}"></a>
 
   </div>
     <br/>

@@ -5,8 +5,10 @@ import kz.timka.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -40,12 +42,16 @@ public class PeopleController {
     }
 
     @PostMapping
-    public String create(@ModelAttribute("person") Person person) {
+    public String create(@ModelAttribute("createPersonObj") @Valid Person person,
+                         BindingResult bindingResult) { // в случае ошибки сюда помещается ошибка, она должна всегда идти после того класса которого валидируем
         // автоматно создасть обьект Person заполнить его поля сеттерами из html формы, также добавить его сразу в модель
 //        Person p = new Person();
 //        p.setId(1L);
 //        p.setName("some name");
 //        model.addAttribute("person", p); это все сделает за нас аннотация
+        if(bindingResult.hasErrors()) {
+            return "people/new";
+        }
         personDAO.save(person);
         return "redirect:/people"; // указали путь куда редирект сделать
 
@@ -59,7 +65,10 @@ public class PeopleController {
     }
 
     @PatchMapping("/{id}")
-    public String update(@ModelAttribute("person") Person person, @PathVariable Long id) {
+    public String update(@ModelAttribute("personEdit") @Valid Person person,BindingResult bindingResult ,@PathVariable Long id) {
+        if(bindingResult.hasErrors()) {
+            return "people/edit";
+        }
         personDAO.update(id,person);
         return "redirect:/people";
     }
