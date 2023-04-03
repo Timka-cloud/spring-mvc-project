@@ -4,6 +4,7 @@ import kz.timka.models.Person;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,41 +14,88 @@ import java.util.List;
 public class PersonDAO {
 
     private static long peopleCount = 1;
-    private List<Person> people;
+    private static final String URL = "jdbc:postgresql://localhost:5433/first_db";
+    private static final String USERNAME = "postgres";
+    private static final String PASSWORD = "root";
 
-    @PostConstruct
-    public void init() {
-        people = new ArrayList<>(Arrays.asList(
-                new Person(peopleCount++, "Alex", "Benjamin", 21,"alex@gmail.ru"),
-                new Person(peopleCount++, "Tom", "Spencer", 24,"tom@gmail.ru"),
-                new Person(peopleCount++, "Ben", "Lincoln", 19,"ben@gmail.ru"),
-                new Person(peopleCount++, "Kate", "Datsu", 32,"kate@gmail.ru")
-        ));
+    private static Connection connection;
+
+    static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void save(Person person) {
-        person.setId(peopleCount++);
-        people.add(person);
+        try {
+            Statement statement = connection.createStatement();
+            String sql = "INSERT INTO Person VALUES (" + 2 + ", '" + person.getName() + "', "
+                    + person.getAge() + ", '" + person.getEmail() + "', '" + person.getSurname() + "')";
+            statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void update(Long id, Person person) {
-        Person personToBeUpdated = getById(id);
-        personToBeUpdated.setName(person.getName());
-        personToBeUpdated.setSurname(person.getSurname());
-        personToBeUpdated.setAge(person.getAge());
-        personToBeUpdated.setEmail(person.getEmail());
+//        Person personToBeUpdated = getById(id);
+//        personToBeUpdated.setName(person.getName());
+//        personToBeUpdated.setSurname(person.getSurname());
+//        personToBeUpdated.setAge(person.getAge());
+//        personToBeUpdated.setEmail(person.getEmail());
     }
 
     public List<Person> findAll() {
-        return Collections.unmodifiableList(people);
+        List<Person> people = new ArrayList<>();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from Person");
+            while (resultSet.next()) {
+                Person person = new Person();
+                person.setId(resultSet.getLong("id"));
+                person.setName(resultSet.getString("name"));
+                person.setSurname(resultSet.getString("surname"));
+                person.setAge(resultSet.getInt("age"));
+                person.setEmail(resultSet.getString("email"));
+                people.add(person);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return people;
     }
 
     public Person getById(Long id) {
-        return people.stream().filter(p -> p.getId().equals(id)).findAny().orElse(null);
+
+        Person person = new Person();
+        try {
+            Statement statement = connection.createStatement();
+            String sql = "select * from person where id =" + id;
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                person.setId(resultSet.getLong("id"));
+                person.setName(resultSet.getString("name"));
+                person.setSurname(resultSet.getString("surname"));
+                person.setAge(resultSet.getInt("age"));
+                person.setEmail(resultSet.getString("email"));
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+       // return people.stream().filter(p -> p.getId().equals(id)).findAny().orElse(null);
+        return person;
     }
 
 
     public void delete(Long id) {
-        people.removeIf(p -> p.getId().equals(id));
+     //   people.removeIf(p -> p.getId().equals(id));
     }
 }
